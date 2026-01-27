@@ -1,0 +1,9 @@
+# Ignoruj tymczasowe
+*.tmp
+*.log
+*.pyc
+__pycache__/
+
+# Ignoruj sensytywne (jeśli będą)
+*.key
+*.secret
