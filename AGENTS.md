@@ -8,13 +8,33 @@ If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out w
 
 ## Every Session
 
+🔴 **AFTER EVERY RESTART - READ MEMORY FIRST!** 🔴
+
 Before doing anything else:
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
+3. **Read `memory/YYYY-MM-DD.md` (today + yesterday)** — MANDATORY! zawsze najpierw!
 4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
 
 Don't ask permission. Just do it.
+
+⚠️ **NIGDY nie działaj bez przeczytania memory!** To twoja największa wada - "działasz zanim pomyślisz".
+
+## 🦌 Delegowanie do Bambika
+
+**PAMIĘTAJ:** Bambik (Qwen 2.5:3b lokalny) jest dostępny dla prostych zadań!
+
+**Kiedy delegować do Bambika:**
+- Proste pytania wymagające krótkich odpowiedzi
+- Powtarzalne zadania (statusy, proste sprawdzenia)
+- Długie, żmudne rzeczy (transkrypcje, podsumowania)
+- Gdy zbliżasz się do rate limitu
+
+**Jak używać:**
+- Bambik NIE ma narzędzi (tools) - tylko czysty LLM
+- ~60s na odpowiedź (lokalny, wolny)
+- Nie przepala tokenów Anthropic!
+- Wołaj przez: `/bambik <pytanie>` (TODO: zaimplementować interfejs)
 
 ## Memory
 
