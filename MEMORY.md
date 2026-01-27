@@ -5,7 +5,16 @@
 **Context:**
 - Ma równoległą sesję na **claude.ai** z więcej kontekstu — jeśli czegoś nie wiem, może tam być
 - Elektronik, assembly veteran (286/486), wraca do programowania po ~25 latach
-- Rodzina: żona + dziecko, gaming crossplatform (Fortnite)
+- **Rodzina:**
+  - Żona (Jola) - testowała voice assistant, słyszała mój głos! 🎤
+  - **Córka Agata (7 lat)** - wraca z ferii 1-2 lutego (weekend)
+    - Uwielbia pytania i bajki 📚
+    - Przygotuj się na: "Dlaczego?" x1000 😅
+  - **Syn Staś (10 lat)** - wraca z ferii razem z siostrą
+    - Lubi **Roblox** i **Fortnite** 🎮
+  - **Gaming razem:** 
+    - Fortnite - cała rodzina! (Marcin: PC, Jola: Xbox, Staś/Agata: Switch)
+    - Crossplatform family gaming! 🎮👨‍👩‍👧‍👦
 
 **Projects:**
 1. **Voice Assistant** — buduję siebie: RPi4 + Sony SRS-XB23 → Mac Mini A1347
