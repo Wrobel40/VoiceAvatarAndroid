@@ -29,8 +29,8 @@ def log(msg):
 
 def transcribe_wav2vec(audio_path):
     """Transkrypcja via Wav2Vec2 (lepszy dla polskiego)."""
-    import subprocess
     audio_str = str(audio_path)
+    WAV2VEC_PATH = "/Users/apple/.cache/huggingface/hub/models--jonatasgrosman--wav2vec2-large-xlsr-53-polish/snapshots/6b1cea36bd8bc5f65ec8081667cd9c0207d51970"
     try:
         cmd = [
             "bash", "-c",
@@ -38,8 +38,8 @@ def transcribe_wav2vec(audio_path):
             "import torch; "
             "from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor; "
             "import librosa; "
-            "processor = Wav2Vec2Processor.from_pretrained('facebook/wav2vec2-large-xlsr-53-polish'); "
-            "model = Wav2Vec2ForCTC.from_pretrained('facebook/wav2vec2-large-xlsr-53-polish'); "
+            "processor = Wav2Vec2Processor.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
+            "model = Wav2Vec2ForCTC.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
             "audio, sr = librosa.load(\\\"" + audio_str + "\\\", sr=16000); "
             "inputs = processor(audio, sampling_rate=16000, return_tensors='pt', padding=True); "
             "with torch.no_grad(): "
@@ -186,7 +186,7 @@ class VoiceHandler(http.server.BaseHTTPRequestHandler):
                         f.write(audio_data)
                     
                     log("Transkrypcja Whisper...")
-                    text = transcribe_whisper(audio_path)
+                    text = transcribe_wav2vec(audio_path)
                     log(f"STT: {text}")
                     
                     if text:
@@ -239,26 +239,30 @@ class VoiceHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == "__main__":
-    log("=== Voice Webhook Server (Whisper STT) ===")
+    log("=== Voice Webhook Server (Wav2Vec STT) ===")
     
-    # Preload model Whisper przy starcie żeby było szybciej
-    log("Ładowanie modelu Whisper (to chwilę trwa)...")
+    WAV2VEC_PATH = "/Users/apple/.cache/huggingface/hub/models--jonatasgrosman--wav2vec2-large-xlsr-53-polish/snapshots/6b1cea36bd8bc5f65ec8081667cd9c0207d51970"
+    
+    # Preload model Wav2Vec przy starcie żeby było szybciej
+    log("Ładowanie modelu Wav2Vec (to chwilę trwa)...")
     try:
         cmd = [
             "bash", "-c",
             "KMP_DUPLICATE_LIB_OK=TRUE python3.11 -c \""
-            "from faster_whisper import WhisperModel; "
+            "import torch; "
+            "from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor; "
             "print('Ładowanie modelu...'); "
-            "model = WhisperModel('base', device='cpu', compute_type='int8'); "
+            "processor = Wav2Vec2Processor.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
+            "model = Wav2Vec2ForCTC.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
             "print('Model gotowy!')\""
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180, env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"})
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300, env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"})
         if result.returncode == 0:
-            log(f"Whisper preload: {result.stdout.strip()}")
+            log(f"Wav2Vec preload: {result.stdout.strip()}")
         else:
-            log(f"Whisper preload warning: {result.stderr[:100]}")
+            log(f"Wav2Vec preload warning: {result.stderr[:100]}")
     except Exception as e:
-        log(f"Whisper preload error: {e}")
+        log(f"Wav2Vec preload error: {e}")
     
     log("Uruchamianie serwera HTTP...")
     with socketserver.TCPServer(("", PORT), VoiceHandler) as httpd:
