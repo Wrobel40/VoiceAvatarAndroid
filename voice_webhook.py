@@ -32,27 +32,30 @@ def transcribe_wav2vec(audio_path):
     audio_str = str(audio_path)
     WAV2VEC_PATH = "/Users/apple/.cache/huggingface/hub/models--jonatasgrosman--wav2vec2-large-xlsr-53-polish/snapshots/6b1cea36bd8bc5f65ec8081667cd9c0207d51970"
     try:
+        # Używamy zmiennej środowiskowej żeby przekazać ścieżkę
+        env = {**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE", "WAV2VEC_PATH": WAV2VEC_PATH, "AUDIO_PATH": audio_str}
         cmd = [
             "bash", "-c",
-            "KMP_DUPLICATE_LIB_OK=TRUE python3.11 -c \""
+            "python3.11 -c \""
+            "import os; "
             "import torch; "
             "from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor; "
             "import librosa; "
-            "processor = Wav2Vec2Processor.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
-            "model = Wav2Vec2ForCTC.from_pretrained('" + WAV2VEC_PATH + "', local_files_only=True); "
-            "audio, sr = librosa.load(\\\"" + audio_str + "\\\", sr=16000); "
-            "inputs = processor(audio, sampling_rate=16000, return_tensors='pt', padding=True); "
-            "with torch.no_grad(): "
-            "    logits = model(inputs.input_values).logits; "
-            "    predicted_ids = torch.argmax(logits, dim=-1); "
-            "    transcription = processor.batch_decode(predicted_ids)[0]; "
-            "print(transcription)\""
+            "path = os.environ.get('WAV2VEC_PATH'); "
+            "audio_file = os.environ.get('AUDIO_PATH'); "
+            "processor = Wav2Vec2Processor.from_pretrained(path, local_files_only=True); "
+            "model = Wav2Vec2ForCTC.from_pretrained(path, local_files_only=True); "
+            "audio, sr = librosa.load(audio_file, sr=16000); "
+            "inputs = processor(audio, sampling_rate=16000, return_tensors=\\\"pt\\\", padding=True); "
+            "with torch.no_grad(): logits = model(inputs.input_values).logits; "
+            "predicted_ids = torch.argmax(logits, dim=-1); "
+            "print(processor.batch_decode(predicted_ids)[0])\""
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"})
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, env=env)
         if result.returncode == 0 and result.stdout.strip():
             return result.stdout.strip()
         else:
-            log(f"Wav2Vec error: {result.stderr[:200] if result.stderr else result.stdout[:200]}")
+            log(f"Wav2Vec error: {result.stderr[:300] if result.stderr else result.stdout[:300]}")
             return None
     except subprocess.TimeoutExpired:
         log("Wav2Vec timeout")
@@ -185,7 +188,7 @@ class VoiceHandler(http.server.BaseHTTPRequestHandler):
                     with open(audio_path, 'wb') as f:
                         f.write(audio_data)
                     
-                    log("Transkrypcja Whisper...")
+                    log("Transkrypcja Wav2Vec...")
                     text = transcribe_wav2vec(audio_path)
                     log(f"STT: {text}")
                     
