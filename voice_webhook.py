@@ -186,7 +186,7 @@ class VoiceHandler(http.server.BaseHTTPRequestHandler):
                         f.write(audio_data)
                     
                     log("Transkrypcja Whisper...")
-                    text = transcribe_wav2vec(audio_path)
+                    text = transcribe_whisper(audio_path)
                     log(f"STT: {text}")
                     
                     if text:
@@ -239,29 +239,26 @@ class VoiceHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
 if __name__ == "__main__":
-    log("=== Voice Webhook Server (Wav2Vec2 STT) ===")
+    log("=== Voice Webhook Server (Whisper STT) ===")
     
-    # Preload model Wav2Vec2 przy starcie żeby było szybciej
-    log("Ładowanie modelu Wav2Vec2 (to chwilę trwa)...")
+    # Preload model Whisper przy starcie żeby było szybciej
+    log("Ładowanie modelu Whisper (to chwilę trwa)...")
     try:
         cmd = [
             "bash", "-c",
             "KMP_DUPLICATE_LIB_OK=TRUE python3.11 -c \""
-            "import torch; "
-            "from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor; "
-            "print('Pobieranie modelu...'); "
-            "processor = Wav2Vec2Processor.from_pretrained('jonatasgr/wav2vec2-large-xlsr-53-polish'); "
-            "print('Pobieranie modelu CTC...'); "
-            "model = Wav2Vec2ForCTC.from_pretrained('jonatasgr/wav2vec2-large-xlsr-53-polish'); "
+            "from faster_whisper import WhisperModel; "
+            "print('Ładowanie modelu...'); "
+            "model = WhisperModel('base', device='cpu', compute_type='int8'); "
             "print('Model gotowy!')\""
         ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300, env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"})
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180, env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"})
         if result.returncode == 0:
-            log(f"Wav2Vec2 preload: {result.stdout.strip()}")
+            log(f"Whisper preload: {result.stdout.strip()}")
         else:
-            log(f"Wav2Vec2 preload warning: {result.stderr[:100]}")
+            log(f"Whisper preload warning: {result.stderr[:100]}")
     except Exception as e:
-        log(f"Wav2Vec2 preload error: {e}")
+        log(f"Whisper preload error: {e}")
     
     log("Uruchamianie serwera HTTP...")
     with socketserver.TCPServer(("", PORT), VoiceHandler) as httpd:
