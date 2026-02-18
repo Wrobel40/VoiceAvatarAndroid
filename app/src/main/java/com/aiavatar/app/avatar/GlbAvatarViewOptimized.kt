@@ -112,7 +112,7 @@ fun GlbAvatarView(
         when {
             isLoading -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator(
-                    progress = { loadProgress },
+                    progress = loadProgress,
                     color = Color(0xFF00D4FF),
                     modifier = Modifier.size(64.dp),
                     strokeWidth = 4.dp
@@ -260,11 +260,8 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                         }
 
                         override fun surfaceChanged(h: SurfaceHolder, f: Int, w: Int, h2: Int) {
-                            try {
-                                viewer?.let { v ->
-                                    v.view.setResolution(w, h2)
-                                }
-                            } catch (_: Exception) {}
+                            // Viewport jest zarządzany automatycznie przez ModelViewer
+                            // Nie ma potrzeby ręcznego ustawiania rozdzielczości w tej wersji Filament
                         }
 
                         override fun surfaceDestroyed(h: SurfaceHolder) {
@@ -278,7 +275,6 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                             android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                                 try {
                                     viewer?.destroyModel()
-                                    viewer?.destroy()
                                 } catch (_: Exception) {}
                                 viewer = null
                             }, 100)
