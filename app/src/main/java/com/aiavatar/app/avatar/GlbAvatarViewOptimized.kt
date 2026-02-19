@@ -236,18 +236,43 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     val engine = viewer!!.engine
                                     val scene = viewer!!.scene
                                     
-                                    // Uproszczone oświetlenie - tylko directional light
-                                    // IndirectLight wymaga KTX/IBL, pomijamy dla uproszczenia
+                                    // Uproszczone oświetlenie - TYLKO directional lights (bez KTX/IBL)
                                     try {
-                                        val lightEntity = EntityManager.get().create()
-                                        val lightBuilder = LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                        lightBuilder.color(1.0f, 1.0f, 0.95f) // Białe, lekko ciepłe
-                                        lightBuilder.intensity(500_000f) // Bardzo jasne
-                                        lightBuilder.direction(0.0f, -1.0f, -0.5f) // Z góry i przodu
-                                        lightBuilder.castShadows(false) // Wyłączamy cienie dla wydajności
-                                        lightBuilder.build(engine, lightEntity)
-                                        scene.addEntity(lightEntity)
-                                        android.util.Log.d("GLB", "Directional light added")
+                                        // Światło 1: Główne słońce z przodu-góry
+                                        val light1 = EntityManager.get().create()
+                                        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                            .color(1.0f, 1.0f, 1.0f)
+                                            .intensity(1_000_000f) // Ekstremalnie jasne
+                                            .direction(0.0f, -0.5f, -1.0f) // Z przodu i góry
+                                            .castShadows(false)
+                                            .build(engine, light1)
+                                        scene.addEntity(light1)
+                                        
+                                        // Światło 2: Fill light z boku
+                                        val light2 = EntityManager.get().create()
+                                        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                            .color(0.8f, 0.9f, 1.0f) // Lekko niebieskie
+                                            .intensity(500_000f)
+                                            .direction(-1.0f, -0.3f, 0.5f) // Z lewej strony
+                                            .castShadows(false)
+                                            .build(engine, light2)
+                                        scene.addEntity(light2)
+                                        
+                                        // Światło 3: Rim light z tyłu
+                                        val light3 = EntityManager.get().create()
+                                        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                            .color(1.0f, 0.9f, 0.8f) // Ciepłe
+                                            .intensity(300_000f)
+                                            .direction(0.0f, 0.2f, 1.0f) // Z tyłu
+                                            .castShadows(false)
+                                            .build(engine, light3)
+                                        scene.addEntity(light3)
+                                        
+                                        // Ustaw kolor tła na ciemno-niebieski (jak reszta UI)
+                                        // To pomoże z blendingiem
+                                        scene.skybox = null
+                                        
+                                        android.util.Log.d("GLB", "3 directional lights added")
                                     } catch (e: Exception) {
                                         android.util.Log.e("GLB", "Light error: ${e.message}")
                                     }
