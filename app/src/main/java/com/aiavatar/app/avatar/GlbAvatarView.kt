@@ -233,6 +233,16 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     viewer!!.loadModelGlb(ByteBuffer.wrap(bytes))
                                     viewer!!.transformToUnitCube()
                                     
+                                    // Ustaw kamerę z przodu - transformToUnitCube czasem nie działa poprawnie
+                                    val view = viewer!!.view
+                                    view.camera?.let { cam ->
+                                        // Pozycja kamery: 3 jednostki przed modelem
+                                        cam.setPosition(0.0, 0.0, 3.0)
+                                        // Patrz na środek (0,0,0), oś Y w górę
+                                        cam.lookAt(0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+                                        android.util.Log.d("GLB", "Camera set to position (0,0,3) looking at center")
+                                    }
+                                    
                                     // Logi diagnostyczne
                                     viewer!!.asset?.let { asset ->
                                         android.util.Log.d("GLB", "Asset root: ${asset.root}, entities: ${asset.entities.size}")
