@@ -236,23 +236,21 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     val engine = viewer!!.engine
                                     val scene = viewer!!.scene
                                     
-                                    // Ambient light (światło otoczenia)
-                                    val indirectLight = engine.createIndirectLight()
-                                    indirectLight.intensity = 50_000f // Jasność
-                                    scene.indirectLight = indirectLight
-                                    
-                                    // Dodatkowe światło kierunkowe (słońce)
-                                    val lightEntity = EntityManager.get().create()
-                                    LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                        .color(1.0f, 1.0f, 1.0f) // Białe światło
-                                        .intensity(100_000f) // Bardzo jasne
-                                        .direction(0.0f, -1.0f, -1.0f) // Z góry i przodu
-                                        .castShadows(true)
-                                        .build(engine, lightEntity)
-                                    scene.addEntity(lightEntity)
-                                    
-                                    // Kolor tła - jasny żeby było widać model
-                                    scene.setSkybox(null) // Brak skyboxa (przezroczyste)
+                                    // Uproszczone oświetlenie - tylko directional light
+                                    // IndirectLight wymaga KTX/IBL, pomijamy dla uproszczenia
+                                    try {
+                                        val lightEntity = EntityManager.get().create()
+                                        val lightBuilder = LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                        lightBuilder.color(1.0f, 1.0f, 0.95f) // Białe, lekko ciepłe
+                                        lightBuilder.intensity(500_000f) // Bardzo jasne
+                                        lightBuilder.direction(0.0f, -1.0f, -0.5f) // Z góry i przodu
+                                        lightBuilder.castShadows(false) // Wyłączamy cienie dla wydajności
+                                        lightBuilder.build(engine, lightEntity)
+                                        scene.addEntity(lightEntity)
+                                        android.util.Log.d("GLB", "Directional light added")
+                                    } catch (e: Exception) {
+                                        android.util.Log.e("GLB", "Light error: ${e.message}")
+                                    }
                                     
                                     android.util.Log.d("GLB", "GLB loaded successfully + lighting added")
                                 } catch (e: Exception) {
