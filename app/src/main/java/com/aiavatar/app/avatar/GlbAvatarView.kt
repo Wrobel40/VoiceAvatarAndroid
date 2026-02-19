@@ -238,12 +238,12 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     
                                     // Uproszczone oświetlenie - TYLKO directional lights (bez KTX/IBL)
                                     try {
-                                        // Światło 1: Główne z przodu (PBR wymaga zbalansowanego oświetlenia)
+                                        // Światło 1: Główne z przodu - EKSTREMALNIE JASNE
                                         val light1 = EntityManager.get().create()
                                         LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                            .color(1.0f, 0.95f, 0.9f)
-                                            .intensity(100_000f)
-                                            .direction(0.3f, -0.8f, -0.6f)
+                                            .color(1.0f, 1.0f, 1.0f)
+                                            .intensity(5_000_000f)  // Zwiększone 50x
+                                            .direction(0.0f, -1.0f, -0.5f)
                                             .castShadows(false)
                                             .build(engine, light1)
                                         scene.addEntity(light1)
@@ -251,32 +251,43 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                         // Światło 2: Fill z lewej
                                         val light2 = EntityManager.get().create()
                                         LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                            .color(0.6f, 0.8f, 1.0f)
-                                            .intensity(60_000f)
-                                            .direction(-1.0f, -0.2f, 0.3f)
+                                            .color(1.0f, 1.0f, 1.0f)
+                                            .intensity(2_000_000f)  // Zwiększone
+                                            .direction(-1.0f, -0.3f, 0.5f)
                                             .castShadows(false)
                                             .build(engine, light2)
                                         scene.addEntity(light2)
                                         
-                                        // Światło 3: Rim z tyłu (podkreśla krawędzie metalicznej zbroi)
+                                        // Światło 3: Rim z tyłu
                                         val light3 = EntityManager.get().create()
                                         LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                            .color(1.0f, 0.5f, 0.2f) // Pomarańczowy rim dla neonowego efektu
-                                            .intensity(40_000f)
-                                            .direction(0.5f, 0.1f, 1.0f)
+                                            .color(1.0f, 0.8f, 0.6f)
+                                            .intensity(1_000_000f)  // Zwiększone
+                                            .direction(0.0f, 0.0f, 1.0f)
                                             .castShadows(false)
                                             .build(engine, light3)
                                         scene.addEntity(light3)
                                         
-                                        // Tło - ciemny niebieski (test - nie przezroczyste)
+                                        // Światło 4: AMBIENT - oświetla wszystko równomiernie
+                                        val light4 = EntityManager.get().create()
+                                        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                            .color(1.0f, 1.0f, 1.0f)
+                                            .intensity(500_000f)
+                                            .direction(0.0f, 1.0f, 0.0f)  // Z góry
+                                            .castShadows(false)
+                                            .build(engine, light4)
+                                        scene.addEntity(light4)
+                                        
+                                        // Jasne tło
                                         scene.skybox = Skybox.Builder()
-                                            .color(0.1f, 0.15f, 0.25f, 1f)
+                                            .color(0.5f, 0.5f, 0.6f, 1f)
                                             .build(engine)
                                         
-                                        // IndirectLight (ambient) — WYMAGANE dla PBR
-                                        // Bez IBL model wygląda czarno nawet z directional lights
+                                        // IndirectLight - maksymalna intensywność
                                         val ibl = IndirectLight.Builder()
-                                            .intensity(30_000f)
+                                            .intensity(100_000f)  // Zwiększone
+                                            .build(engine)
+                                        scene.indirectLight = ibl
                                             .build(engine)
                                         scene.indirectLight = ibl
 
