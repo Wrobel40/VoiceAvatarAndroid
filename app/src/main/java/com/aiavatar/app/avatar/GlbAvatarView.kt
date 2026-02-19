@@ -302,11 +302,6 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                             val pos = FloatArray(3)
                                             cam.getPosition(pos)
                                             android.util.Log.d("GLB", "Camera position: [${pos[0]}, ${pos[1]}, ${pos[2]}]")
-                                            
-                                            // Ustaw kamerę z przodu modelu (transformToUnitCube powinien to zrobić, ale na wszelki wypadek)
-                                            cam.setPosition(0.0, 0.0, 3.0)  // Z przodu, 3 jednostki dalej
-                                            cam.lookAt(0.0, 0.0, 0.0, 0.0, 1.0, 0.0)  // Patrz na środek
-                                            android.util.Log.d("GLB", "Camera repositioned to front")
                                         }
                                     } catch (e: Exception) {
                                         android.util.Log.e("GLB", "Light error: ${e.message}")
