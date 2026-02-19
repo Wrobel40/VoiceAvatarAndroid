@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.aiavatar.app.audio.RecordingState
 import com.google.android.filament.*
+import com.google.android.filament.EntityManager
 import com.google.android.filament.utils.ModelViewer
 import com.google.android.filament.utils.Utils
 import java.io.File
@@ -241,18 +242,13 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     scene.indirectLight = indirectLight
                                     
                                     // Dodatkowe światło kierunkowe (słońce)
-                                    val lightEntity = engine.createEntity()
-                                    val lightManager = engine.lightManager
-                                    lightManager.create(
-                                        lightEntity,
-                                        LightManager.Type.DIRECTIONAL,
-                                        LightManager.Builder(LightManager.Type.DIRECTIONAL)
-                                            .color(1.0f, 1.0f, 1.0f) // Białe światło
-                                            .intensity(100_000f) // Bardzo jasne
-                                            .direction(0.0f, -1.0f, -1.0f) // Z góry i przodu
-                                            .castShadows(true)
-                                            .build(engine)
-                                    )
+                                    val lightEntity = EntityManager.get().create()
+                                    LightManager.Builder(LightManager.Type.DIRECTIONAL)
+                                        .color(1.0f, 1.0f, 1.0f) // Białe światło
+                                        .intensity(100_000f) // Bardzo jasne
+                                        .direction(0.0f, -1.0f, -1.0f) // Z góry i przodu
+                                        .castShadows(true)
+                                        .build(engine, lightEntity)
                                     scene.addEntity(lightEntity)
                                     
                                     // Kolor tła - jasny żeby było widać model
