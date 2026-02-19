@@ -157,9 +157,10 @@ fun GlbAvatarView(
                     bobY = bobY,
                     modifier = Modifier.fillMaxSize()
                 )
-                if (recordingState == RecordingState.LISTENING || amplitude > 0.15f) {
-                    ListeningRingsOverlay(amplitude = amplitude, modifier = Modifier.fillMaxSize())
-                }
+                // TEST: Wyłączone ListeningRingsOverlay - może zasłaniać model
+                // if (recordingState == RecordingState.LISTENING || amplitude > 0.15f) {
+                //     ListeningRingsOverlay(amplitude = amplitude, modifier = Modifier.fillMaxSize())
+                // }
             }
         }
     }
