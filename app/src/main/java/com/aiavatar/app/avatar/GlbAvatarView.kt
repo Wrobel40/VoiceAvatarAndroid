@@ -232,6 +232,11 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                     viewer!!.loadModelGlb(ByteBuffer.wrap(bytes))
                                     viewer!!.transformToUnitCube()
                                     
+                                    // Logi diagnostyczne
+                                    viewer!!.asset?.let { asset ->
+                                        android.util.Log.d("GLB", "Asset root: ${asset.root}, entities: ${asset.entities.size}")
+                                    }
+                                    
                                     // DODAJ OŚWIETLENIE - to kluczowe!
                                     val engine = viewer!!.engine
                                     val scene = viewer!!.scene
@@ -289,7 +294,7 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                             .build(engine)
                                         scene.indirectLight = ibl
 
-                                        android.util.Log.d("GLB", "3 directional lights + IBL added")
+                                        android.util.Log.d("GLB", "4 directional lights + IBL (intensywność: 5M,2M,1M,500K + 100K)")
                                     } catch (e: Exception) {
                                         android.util.Log.e("GLB", "Light error: ${e.message}")
                                     }
