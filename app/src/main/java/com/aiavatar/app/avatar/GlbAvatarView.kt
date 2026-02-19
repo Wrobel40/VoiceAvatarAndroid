@@ -288,8 +288,6 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                             .intensity(100_000f)  // Zwiększone
                                             .build(engine)
                                         scene.indirectLight = ibl
-                                            .build(engine)
-                                        scene.indirectLight = ibl
 
                                         android.util.Log.d("GLB", "3 directional lights + IBL added")
                                     } catch (e: Exception) {
