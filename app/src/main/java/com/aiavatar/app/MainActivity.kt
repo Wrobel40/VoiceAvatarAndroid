@@ -12,8 +12,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.graphics.Color
 import com.aiavatar.app.ui.MainScreen
-import com.aiavatar.app.ui.NavyDeep
 import com.aiavatar.app.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = NavyDeep) {
+                Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
                     val viewModel: MainViewModel = viewModel()
                     MainScreen(viewModel = viewModel)
                 }
