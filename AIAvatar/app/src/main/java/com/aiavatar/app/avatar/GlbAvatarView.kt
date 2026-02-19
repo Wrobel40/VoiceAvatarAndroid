@@ -268,9 +268,9 @@ private fun ModelViewerSurfaceOptimized(bytes: ByteArray, bobY: Float, modifier:
                                             .build(engine, light3)
                                         scene.addEntity(light3)
                                         
-                                        // Przezroczyste tło (model na tle app UI)
+                                        // Tło - ciemny niebieski (test - nie przezroczyste)
                                         scene.skybox = Skybox.Builder()
-                                            .color(0f, 0f, 0f, 0f)
+                                            .color(0.1f, 0.15f, 0.25f, 1f)
                                             .build(engine)
                                         
                                         // IndirectLight (ambient) — WYMAGANE dla PBR
